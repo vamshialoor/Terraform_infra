@@ -1,0 +1,31 @@
+name: Deploy IaC to Azure
+
+on: 
+ workflow_dispatch:
+    inputs:
+      environment:
+        description: Environment
+        type: choice
+        options:
+          - dev
+          - test
+          - stage
+          - alpha
+          - bravo
+          - prod
+        default: "dev"
+run-name: ${{ github.event_name != 'workflow_dispatch' && '' || format('Deploying PSS IaC to {0} environment', inputs.environment) }}
+jobs:
+  deploy:
+    uses: dojo360/dojo-terraform-workflows/.github/workflows/pipeline-apply.yml@cca6d0cb6438869ef3d117ae4c492470852cb3c2 # v2.0.3
+    with:
+      azure_client_id: ${{ (github.event.inputs.environment == 'prod') && vars.PROD_CLIENT_ID || vars.AZURE_CLIENT_ID }}
+      azure_tenant_id: ${{ vars.AZURE_TENANT_ID }}
+      cloud_provider: "azure"     
+      environment_name: ${{ github.event.inputs.environment }}
+      optumfile_path: optumfiles/${{ github.event.inputs.environment }}.json
+      optumfile_runner: "uhg-runner"
+      validate_runner: "uhg-runner"
+    secrets:          
+          AZ_CLIENT_SECRET: ${{  (github.event.inputs.environment == 'prod') && secrets.PROD_CLIENT_SECRET || secrets.AZ_CLIENT_SECRET }}
+          GH_TOKEN: ${{ secrets.GHEC_TOKEN }}

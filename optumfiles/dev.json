@@ -1,0 +1,34 @@
+{
+    "terraform_version": "1.4.6",
+    "remote_state": {
+      "azure": {
+      "subscription_id": "e3c09177-aab1-41fd-a380-41161721482c",
+      "resource_group_name": "rg-poca-pss-tfstate",
+      "storage_account_name": "pocapsstfstate",
+      "storage_account_location": "centralus",
+      "state_container_name": "poca-pss-dev",
+      "plan_container_name": "poca-pss-dev-plan"
+    }
+    },
+    "tfvars": {
+      "files": [
+        "tfvars/dev.tfvars"
+      ]
+    },
+    "deployments": [
+      {
+        "name": "dev",
+        "path": ".",
+        "remote_state_key": "poca-pss-plan",
+        "runner": "uhg-runner",
+        "tfvars": {
+          "values": {
+            "namespace": "dev"
+          },
+          "files": [
+            "tfvars/dev.tfvars"
+          ]
+        }
+      }
+    ]
+  }
